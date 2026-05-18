@@ -28,6 +28,6 @@
     return_content: yes
     status_code: 200
   register: result
-  failed_when: "'Hello from Ansible Role' not in result.content"
+  failed_when: "'Hello from group_vars' not in result.content"
   tags:
     - check
