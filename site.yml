@@ -1,0 +1,41 @@
+---
+- hosts: web
+  become: yes
+
+  vars:
+    Page_title: My First DevOps Project
+
+  tasks:
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: yes    
+    - name: Create index page
+      ansible.builtin.copy:
+        content:
+          <html>
+          <head>
+              <title>{{ Page_title }}</title>
+          </head>
+
+          <body>
+              <h1>Hello from Ansible</h1>
+              <p>My first DevOps pet project</p>
+          </body>
+          </html>
+        dest: /var/www/html/index.html
+    - name: Start nginx
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
+    - name: Check nginx
+      ansible.builtin.uri:
+        url: http://localhost
+        return_content: yes
+        status_code: 200
+      register: result
+      failed_when: "'Hello from Ansible' not in result.content"      
+              
+
