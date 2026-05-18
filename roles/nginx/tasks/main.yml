@@ -1,0 +1,33 @@
+- name: Install nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: yes
+  tags:
+    - install
+
+- name: Create index page from template
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+  notify: Restart nginx
+  tags:
+    - config
+
+- name: Start nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: yes
+  tags:
+    - service
+
+- name: Check nginx page
+  ansible.builtin.uri:
+    url: http://localhost
+    return_content: yes
+    status_code: 200
+  register: result
+  failed_when: "'Hello from Ansible Role' not in result.content"
+  tags:
+    - check
